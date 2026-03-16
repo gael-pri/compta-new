@@ -1,6 +1,8 @@
 import type * as React from "react";
 import { forwardRef, useState, useEffect, useCallback, useRef } from "react";
 import { useUsers, useRoles } from "@hooks/useUsers";
+import { uploadFiles } from "@directus/sdk";
+import { directusClient, STORAGE_KEY } from "@lib/directusClient";
 
 import { useAlert } from "@context/AlertContext";
 
@@ -92,6 +94,14 @@ const AccountParameters = forwardRef<HTMLDivElement, AccountParametersProps>(
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const avatarUrl = "https://i.pravatar.cc/150";
+    const [imgCacheBust, setImgCacheBust] = useState(0);
+
+    const getAvatarSrc = () => {
+      if (!editableImage) return avatarUrl;
+      const auth = localStorage.getItem(STORAGE_KEY);
+      const token = auth ? JSON.parse(auth)?.access_token : "";
+      return `${directusUrl}/assets/${editableImage}?access_token=${token}${imgCacheBust ? `&t=${imgCacheBust}` : ""}`;
+    };
 
     // === Synchronisation avec user async ===
     // useEffect(() => {
@@ -153,24 +163,32 @@ const AccountParameters = forwardRef<HTMLDivElement, AccountParametersProps>(
       />
     ));
 
-    // === Upload image ===
+    // === Upload image via Directus ===
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file || !user) return;
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("id", user.id.toString());
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || "https://api.argostack.argoweb.fr"}/upload-profile-image/${user.id}`, {
-          method: "POST",
-          body: formData,
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("title", `profile-${user.id}`);
+
+        const uploaded = await directusClient.request(uploadFiles(formData));
+        const fileId = uploaded.id;
+
+        await updateUser({
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          image: fileId,
         });
-        if (response.ok) {
-          const data = await response.json();
-          setEditableImage(data.fileName);
-          addAlert("success", "Photo de profil mise à jour avec succès");
-        } else addAlert("error", "Échec du téléchargement de l'image");
+
+        setEditableImage(fileId);
+        setImgCacheBust(Date.now());
+        addAlert("success", "Photo de profil mise à jour avec succès");
       } catch (error) {
         addAlert("error", "Erreur lors du téléchargement de l'image");
       }
@@ -191,12 +209,11 @@ const AccountParameters = forwardRef<HTMLDivElement, AccountParametersProps>(
             lastName: editableLastName,
             username: editableUserName,
             email: editableEmail,
-            role: editableRole,
+            role: user.role,
             image: editableImage,
           });
 
-          // Force image reload by appending a timestamp
-          setEditableImage(`${editableImage}?t=${Date.now()}`);
+          setImgCacheBust(Date.now());
 
           addAlert("success", "Informations utilisateur modifiées avec succès");
         } catch (error: any) {
@@ -238,7 +255,7 @@ const AccountParameters = forwardRef<HTMLDivElement, AccountParametersProps>(
     const headingKey = `heading${titleHeading.slice(1)}` as "heading1" | "heading2" | "heading3";
     const headingStyle = presets[headingKey] || presets.heading1;
 
-    const publicImages = import.meta.env.VITE_BACKEND_URL || "https://api.argostack.argoweb.fr"
+    const directusUrl = import.meta.env.VITE_DIRECTUS_URL || "http://localhost:60005";
 
     useEffect(() => {
       if (role) {
@@ -255,7 +272,7 @@ const AccountParameters = forwardRef<HTMLDivElement, AccountParametersProps>(
           <div style={presets.inputGroup as React.CSSProperties}>
             <div className={styles.blockImage}>
 
-              <img src={editableImage ? `${publicImages}/images/profiles/${editableImage}` :  avatarUrl} className={styles.profilImage}/>
+              <img src={getAvatarSrc()} className={styles.profilImage}/>
               <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} ref={fileInputRef} />
               <button type="button" onClick={() => fileInputRef.current?.click()} className={styles.buttonImage} >
                 <Upload className={styles.iconImage} size={18} />

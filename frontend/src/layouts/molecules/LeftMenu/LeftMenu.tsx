@@ -2,10 +2,11 @@ import { Link, useLocation } from "react-router-dom";
 import { User } from "@/core/types/user";
 import { LayoutDashboard, CalendarDays, Settings, LogOut } from "lucide-react";
 import { useAuth } from "@hooks/useAuth";
+import { STORAGE_KEY } from "@lib/directusClient";
 
 import styles from "@modules/LeftMenu.module.css";
 
-export default function LeftMenu({ user }: { user: User }) {
+export default function LeftMenu({ user, onNavigate }: { user: User; onNavigate?: () => void }) {
   const location = useLocation();
   const { logout } = useAuth();
 
@@ -29,13 +30,13 @@ export default function LeftMenu({ user }: { user: User }) {
           <p className={styles.sectionLabel}>Budget</p>
           <ul>
             <li className={styles.navItem}>
-              <Link to="/dashboard" className={isActive("/dashboard") ? styles.active : undefined}>
+              <Link to="/dashboard" className={isActive("/dashboard") ? styles.active : undefined} onClick={onNavigate}>
                 <LayoutDashboard className={styles.navIcon} />
                 Mensuel
               </Link>
             </li>
             <li className={styles.navItem}>
-              <Link to="/dashboard/annuel" className={isActive("/dashboard/annuel") ? styles.active : undefined}>
+              <Link to="/dashboard/annuel" className={isActive("/dashboard/annuel") ? styles.active : undefined} onClick={onNavigate}>
                 <CalendarDays className={styles.navIcon} />
                 Annuel
               </Link>
@@ -45,7 +46,7 @@ export default function LeftMenu({ user }: { user: User }) {
           <p className={styles.sectionLabel}>Compte</p>
           <ul>
             <li className={styles.navItem}>
-              <Link to="/dashboard/parameters" className={isActive("/dashboard/parameters") ? styles.active : undefined}>
+              <Link to="/dashboard/parameters" className={isActive("/dashboard/parameters") ? styles.active : undefined} onClick={onNavigate}>
                 <Settings className={styles.navIcon} />
                 Parametres
               </Link>
@@ -68,7 +69,21 @@ export default function LeftMenu({ user }: { user: User }) {
 
       <div className={styles.userSection}>
         <div className={styles.userBadge}>
-          <div className={styles.userAvatar}>{getInitials()}</div>
+          {user.image ? (
+            <img
+              src={(() => {
+                const directusUrl = import.meta.env.VITE_DIRECTUS_URL || "http://localhost:60005";
+                const auth = localStorage.getItem(STORAGE_KEY);
+                const token = auth ? JSON.parse(auth)?.access_token : "";
+                return `${directusUrl}/assets/${user.image}?access_token=${token}&width=72&height=72&fit=cover`;
+              })()}
+              className={styles.userAvatar}
+              style={{ objectFit: "cover" }}
+              alt=""
+            />
+          ) : (
+            <div className={styles.userAvatar}>{getInitials()}</div>
+          )}
           <div className={styles.userInfo}>
             <span className={styles.userName}>
               {user.firstName} {user.lastName}

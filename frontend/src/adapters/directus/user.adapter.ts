@@ -21,12 +21,12 @@ function mapDirectusUserToUser(user: any): User {
   return {
     id: user.id,
     email: user.email,
-    username: user.username ?? user.email,
+    username: user.title ?? user.email,
     firstName: user.first_name ?? null,
     lastName: user.last_name ?? null,
     role: user.role ?? "user",
     avatar: user.avatar ?? null,
-    image: user.image ?? null,
+    image: user.avatar ?? null,
   };
 }
 
@@ -44,7 +44,9 @@ export const directusUserAdapter: UserPort = {
   // Get ALL
    async getAll() {
     try {
-      const res = await directusClient.request(readUsers());
+      const res = await directusClient.request(readUsers({
+        fields: ["id", "email", "first_name", "last_name", "role", "avatar", "title"],
+      }));
       return res?.map(mapDirectusUserToUser) ?? [];
     } catch (err) {
       console.error('Error fetching users:', err);
@@ -69,15 +71,14 @@ export const directusUserAdapter: UserPort = {
   ///////////////////
   // Create a profil
   async create(payload) {
-    const data: DirectusUserInput = {
+    const data: Record<string, any> = {
       email: payload.email || '',
       password: payload.password || '',
-      username: payload.username ?? payload.email,
+      title: payload.username ?? payload.email,
       first_name: payload.firstName,
       last_name: payload.lastName,
       role: payload.role ?? "user",
-      avatar: payload.avatar,
-      image: payload.image,
+      avatar: payload.avatar || payload.image || null,
     };
 
     const res = await directusClient.request(
@@ -91,16 +92,18 @@ export const directusUserAdapter: UserPort = {
   // Update a profil
   async update(payload) {
     const { id, ...user } = payload;
-    const data: DirectusUserInput = {
+    const data: Record<string, any> = {
       email: user.email || '',
-      password: user.password || '',
-      username: user.username ?? user.email,
+      title: user.username ?? user.email,
       first_name: user.firstName,
       last_name: user.lastName,
       role: user.role ?? "user",
-      avatar: user.avatar,
-      image: user.image,
+      avatar: user.image || user.avatar || null,
     };
+    // Only include password if explicitly provided
+    if (user.password) {
+      data.password = user.password;
+    }
     const res = await directusClient.request(
       updateUser(String(id), data as any)
     );

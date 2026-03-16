@@ -146,7 +146,7 @@ export default function BudgetChart({ entries, mois, annee, layout = "mensuel" }
 
   return (
     <div style={{ marginBottom: 24 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 16 }}>
+      <div className="chart-grid">
         {/* Left: Donut + mini courses (mensuel only) */}
         <div style={cardStyle}>
           <h3 style={chartTitleStyle}>Repartition par type</h3>
@@ -156,6 +156,8 @@ export default function BudgetChart({ entries, mois, annee, layout = "mensuel" }
             width={280}
             height={240}
             options={{
+              responsive: true,
+              maintainAspectRatio: true,
               plugins: { legend: { display: false } },
               cutout: "60%",
             }}
@@ -175,7 +177,7 @@ export default function BudgetChart({ entries, mois, annee, layout = "mensuel" }
                 data={coursesData}
                 width={280}
                 height={120}
-                options={coursesChartOptions}
+                options={{ ...coursesChartOptions, responsive: true, maintainAspectRatio: true }}
               />
             </div>
           )}
@@ -208,22 +210,26 @@ export default function BudgetChart({ entries, mois, annee, layout = "mensuel" }
           </div>
 
           <h3 style={chartTitleStyle}>{chargesTitle}</h3>
-          <GraphJs
-            type="bar"
-            data={chargesData}
-            width={650}
-            height={300}
-            options={{
-              plugins: { legend: { display: false } },
-              scales: {
-                x: { grid: { display: false } },
-                y: {
-                  beginAtZero: true,
-                  ticks: { callback: (v: any) => `${v} €` },
+          <div style={{ width: "100%" }}>
+            <GraphJs
+              type="bar"
+              data={chargesData}
+              width={650}
+              height={300}
+              options={{
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                  x: { grid: { display: false } },
+                  y: {
+                    beginAtZero: true,
+                    ticks: { callback: (v: any) => `${v} €` },
+                  },
                 },
-              },
-            }}
-          />
+              }}
+            />
+          </div>
         </div>
       </div>
 
@@ -236,24 +242,20 @@ export default function BudgetChart({ entries, mois, annee, layout = "mensuel" }
               {coursesTotal.toLocaleString("fr-FR")} €
             </span>
           </div>
-          <GraphJs
-            type="line"
-            data={coursesData}
-            width={1000}
-            height={180}
-            options={coursesChartOptions}
-          />
+          <div style={{ width: "100%" }}>
+            <GraphJs
+              type="line"
+              data={coursesData}
+              width={1000}
+              height={180}
+              options={{ ...coursesChartOptions, responsive: true, maintainAspectRatio: true }}
+            />
+          </div>
         </div>
       )}
 
       {/* Shared legend */}
-      <div style={{
-        display: "flex",
-        justifyContent: "center",
-        gap: 24,
-        marginTop: 12,
-        padding: "10px 0",
-      }}>
+      <div className="chart-legend">
         {[
           { label: "Revenus", color: TYPE_COLORS.revenu },
           { label: "Charges", color: TYPE_COLORS.charges },

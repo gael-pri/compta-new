@@ -10,12 +10,12 @@ function mapDirectusUserToUser(user: any): User {
   return {
     id: user.id,
     email: user.email,
-    username: user.username ?? user.email,
+    username: user.title ?? user.email,
     firstName: user.first_name ?? null,
     lastName: user.last_name ?? null,
     role: user.role ?? "user",
     avatar: user.avatar ?? null,
-    image: user.image ?? null,
+    image: user.avatar ?? null,
   };
 }
 
@@ -25,7 +25,7 @@ export const directusAuthAdapter: AuthPort = {
   // Login
   async login(email: string, password: string) {
     await directusClient.login({ email, password });
-    const user = await directusClient.request(readMe());
+    const user = await directusClient.request(readMe({ fields: ["id", "email", "first_name", "last_name", "role", "avatar", "title"] }));
     return mapDirectusUserToUser(user);
   },
 
@@ -40,7 +40,7 @@ export const directusAuthAdapter: AuthPort = {
   // Get Me
   async me() {
     try {
-      const user = await directusClient.request(readMe());
+      const user = await directusClient.request(readMe({ fields: ["id", "email", "first_name", "last_name", "role", "avatar", "title"] }));
       return mapDirectusUserToUser(user);
     } catch {
       return null;

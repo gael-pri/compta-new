@@ -110,8 +110,8 @@ export default function BudgetForm({ entry, onSubmit, onClose }: Props) {
   };
 
   return (
-    <div style={overlayStyle} onClick={onClose}>
-      <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>
             {isEdit ? "Modifier l'entree" : "Nouvelle entree"}
@@ -273,27 +273,6 @@ export default function BudgetForm({ entry, onSubmit, onClose }: Props) {
     </div>
   );
 }
-
-const overlayStyle: React.CSSProperties = {
-  position: "fixed",
-  inset: 0,
-  backgroundColor: "rgba(0,0,0,0.4)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 1000,
-};
-
-const modalStyle: React.CSSProperties = {
-  background: "white",
-  borderRadius: 16,
-  padding: 32,
-  width: "100%",
-  maxWidth: 480,
-  maxHeight: "90vh",
-  overflowY: "auto",
-  boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
-};
 
 const fieldStyle: React.CSSProperties = {
   display: "flex",

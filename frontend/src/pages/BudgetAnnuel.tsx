@@ -127,7 +127,7 @@ export default function BudgetAnnuel() {
   return (
     <div>
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+      <div className="page-header">
         <div>
           <h1 style={{ fontSize: "1.75rem", fontWeight: 700, margin: 0 }}>Vue annuelle</h1>
           <p style={{ color: "var(--app-text-secondary)", margin: "4px 0 0", fontSize: 14 }}>
@@ -157,7 +157,7 @@ export default function BudgetAnnuel() {
       </div>
 
       {/* Year navigator */}
-      <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
+      <div className="page-nav">
         <button onClick={() => setAnnee(annee - 1)} style={navBtnStyle}><ChevronLeft size={18} /></button>
         <span style={{ fontSize: 16, fontWeight: 600, minWidth: 80, textAlign: "center" }}>{annee}</span>
         <button onClick={() => setAnnee(annee + 1)} style={navBtnStyle}><ChevronRight size={18} /></button>
