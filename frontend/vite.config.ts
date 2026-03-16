@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => {
     server: {
       host: true, // écoute sur 0.0.0.0
       port: 5173,
-      allowedHosts: ["argostack-staging.argoweb.fr", "argostack.argoweb.fr", "argoweb.fr"], // dev
+      allowedHosts: ["compta-staging.artpotentiel.fr", "compta.artpotentiel.fr"], // dev
       proxy: {
         "/directus": {
           target: env.VITE_DIRECTUS_URL || "http://localhost:8055",
@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
     preview: {
       host: true, // écoute sur 0.0.0.0
       port: 4173,
-      allowedHosts: ["argostack-staging.argoweb.fr", "argostack.argoweb.fr", "argoweb.fr"], // preview
+      allowedHosts: ["compta-staging.artpotentiel.fr", "compta.artpotentiel.fr"], // preview
     },
     resolve: {
       alias: {
