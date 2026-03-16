@@ -14,6 +14,8 @@ interface Props {
 const PAGE_INFO: Record<string, { title: string; subtitle: string }> = {
   "/dashboard": { title: "Budget mensuel", subtitle: "Suivi des revenus et depenses" },
   "/dashboard/annuel": { title: "Vue annuelle", subtitle: "Totaux par organisme" },
+  "/dashboard/pro": { title: "Budget pro", subtitle: "Suivi ArgoWeb" },
+  "/dashboard/pro/annuel": { title: "Vue annuelle pro", subtitle: "Totaux ArgoWeb" },
   "/dashboard/parameters": { title: "Parametres", subtitle: "Configurer l'application" },
 };
 

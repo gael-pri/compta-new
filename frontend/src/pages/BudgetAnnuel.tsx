@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useBudget } from "@hooks/useBudget";
 import { BudgetType, BudgetFilters } from "@/core/types/budget";
 import BudgetSummary from "@components/budget/BudgetSummary";
@@ -233,7 +233,7 @@ function AnnualTableBody({ rows }: { rows: (AggregatedRow & { note?: string })[]
             <th style={{ ...thStyle}}>Entrees</th>
             <th></th>
             <th style={{ ...thStyle}}>Mensuel</th>
-            <th style={{ ...thStyle, textAlign: "right" }}>Total</th>
+            <th style={{ ...thStyle, ...stickyTotalStyle, textAlign: "right" }}>Total</th>
           </tr>
         </thead>
         <tbody>
@@ -266,7 +266,7 @@ function AnnualTableBody({ rows }: { rows: (AggregatedRow & { note?: string })[]
               <td style={{ ...tdStyle, color: "var(--app-text-secondary)", fontVariantNumeric: "tabular-nums" }}>
                 {Math.round(row.montant / row.moisCount).toLocaleString("fr-FR")} €
               </td>
-              <td style={{ ...tdStyle, textAlign: "right", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
+              <td style={{ ...tdStyle, ...stickyTotalStyle, textAlign: "right", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
                 {row.montant.toLocaleString("fr-FR")} €
               </td>
             </tr>
@@ -315,6 +315,13 @@ const filterSelectStyle: React.CSSProperties = {
   color: "var(--app-text)",
   outline: "none",
   background: "white",
+};
+
+const stickyTotalStyle: React.CSSProperties = {
+  position: "sticky",
+  right: 0,
+  background: "white",
+  boxShadow: "-4px 0 8px rgba(0,0,0,0.04)",
 };
 
 const thStyle: React.CSSProperties = {
