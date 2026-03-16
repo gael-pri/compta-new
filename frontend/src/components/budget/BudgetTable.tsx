@@ -69,7 +69,7 @@ function SingleTable({
                 <th style={thStyle}>Organisme</th>
                 <th style={thStyle}>Note</th>
                 <th style={{ ...thStyle, textAlign: "right" }}>Montant</th>
-                <th style={{ ...thStyle, textAlign: "right", width: 80 }}>Actions</th>
+                <th style={{ ...thStyle, ...stickyColStyle, textAlign: "right", width: 80 }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -108,7 +108,7 @@ function SingleTable({
                   <td style={{ ...tdStyle, textAlign: "right", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
                     {entry.montant.toLocaleString("fr-FR")} €
                   </td>
-                  <td style={{ ...tdStyle, textAlign: "right" }}>
+                  <td style={{ ...tdStyle, ...stickyColStyle, textAlign: "right" }}>
                     <button onClick={() => onEdit(entry)} style={actionBtn} title="Modifier">
                       <Pencil size={15} />
                     </button>
@@ -179,6 +179,13 @@ const statutBtnStyle: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+};
+
+const stickyColStyle: React.CSSProperties = {
+  position: "sticky",
+  right: 0,
+  background: "white",
+  boxShadow: "-4px 0 8px rgba(0,0,0,0.04)",
 };
 
 const actionBtn: React.CSSProperties = {

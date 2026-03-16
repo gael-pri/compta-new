@@ -223,17 +223,7 @@ function AggregatedTable({
 function AnnualTableBody({ rows }: { rows: (AggregatedRow & { note?: string })[] }) {
   return (
     <div style={{ overflowX: "auto" }}>
-      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, tableLayout: "fixed" }}>
-        <colgroup>
-          <col style={{ width: 40 }} />
-          <col style={{ width: 70 }} />
-          <col />
-          <col style={{ width: 120 }} />
-          <col style={{ width: 70 }} />
-          <col style={{ width: 100 }} />
-          <col style={{ width: 90 }} />
-          <col style={{ width: 100 }} />
-        </colgroup>
+      <table style={{ width: "100%", minWidth: 650, borderCollapse: "collapse", fontSize: 14 }}>
         <thead>
           <tr style={{ borderBottom: "2px solid var(--app-border)", textAlign: "left" }}>
             <th style={{ ...thStyle, textAlign: "center" }}></th>

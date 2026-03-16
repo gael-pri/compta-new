@@ -89,6 +89,15 @@ html, body {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
+/* ─── Summary cards ───────────────────────────────────── */
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
 /* ─── Responsive utilities ─────────────────────────────── */
 
 .page-header {
@@ -158,6 +167,26 @@ html, body {
   .page-nav select {
     margin-left: 0 !important;
     width: 100%;
+  }
+
+  .summary-cards {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 12px;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .summary-cards::-webkit-scrollbar {
+    display: none;
+  }
+
+  .summary-cards > div {
+    min-width: 45%;
+    flex-shrink: 0;
+    scroll-snap-align: start;
   }
 
   .modal-overlay {
