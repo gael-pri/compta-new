@@ -142,6 +142,15 @@ html, body {
     grid-template-columns: 1fr;
   }
 
+  .chart-grid > div {
+    overflow: hidden;
+  }
+
+  .chart-grid canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
   .chart-legend {
     gap: 12px;
   }

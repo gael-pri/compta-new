@@ -64,12 +64,12 @@ function SingleTable({
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
             <thead>
               <tr style={{ borderBottom: "2px solid var(--app-border)", textAlign: "left" }}>
-                <th style={{ ...thStyle, width: 40, textAlign: "center" }}></th>
+                <th className="col-statut" style={{ ...thStyle, width: 32, textAlign: "center" }}></th>
                 <th style={thStyle}>Type</th>
                 <th style={thStyle}>Organisme</th>
                 <th style={thStyle}>Note</th>
-                <th style={{ ...thStyle, textAlign: "right" }}>Montant</th>
-                <th style={{ ...thStyle, ...stickyColStyle, textAlign: "right", width: 80 }}>Actions</th>
+                <th className="col-sticky-montant" style={{ ...thStyle, ...stickyMontantStyle, textAlign: "right" }}>Montant</th>
+                <th className="col-sticky-actions" style={{ ...thStyle, ...stickyActionsStyle, textAlign: "right", width: 80 }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -105,10 +105,10 @@ function SingleTable({
                   </td>
                   <td style={{ ...tdStyle, fontWeight: 500, textTransform: "capitalize" }}>{entry.organisme}</td>
                   <td style={{ ...tdStyle, color: "var(--app-text-secondary)" }}>{entry.note || "—"}</td>
-                  <td style={{ ...tdStyle, textAlign: "right", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
+                  <td className="col-sticky-montant" style={{ ...tdStyle, ...stickyMontantStyle, textAlign: "right", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
                     {entry.montant.toLocaleString("fr-FR")} €
                   </td>
-                  <td style={{ ...tdStyle, ...stickyColStyle, textAlign: "right" }}>
+                  <td className="col-sticky-actions" style={{ ...tdStyle, ...stickyActionsStyle, textAlign: "right" }}>
                     <button onClick={() => onEdit(entry)} style={actionBtn} title="Modifier">
                       <Pencil size={15} />
                     </button>
@@ -181,11 +181,17 @@ const statutBtnStyle: React.CSSProperties = {
   justifyContent: "center",
 };
 
-const stickyColStyle: React.CSSProperties = {
+const stickyMontantStyle: React.CSSProperties = {
+  position: "sticky",
+  right: 80,
+  background: "white",
+  boxShadow: "-4px 0 8px rgba(0,0,0,0.04)",
+};
+
+const stickyActionsStyle: React.CSSProperties = {
   position: "sticky",
   right: 0,
   background: "white",
-  boxShadow: "-4px 0 8px rgba(0,0,0,0.04)",
 };
 
 const actionBtn: React.CSSProperties = {
