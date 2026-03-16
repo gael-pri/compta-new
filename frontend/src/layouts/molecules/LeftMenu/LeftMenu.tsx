@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { User } from "@/core/types/user";
-import { LayoutDashboard, CalendarDays, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, CalendarDays, Settings, LogOut, Briefcase } from "lucide-react";
 import { useAuth } from "@hooks/useAuth";
 import { STORAGE_KEY } from "@lib/directusClient";
 
@@ -27,7 +27,7 @@ export default function LeftMenu({ user, onNavigate }: { user: User; onNavigate?
         </div>
 
         <nav className={styles.nav}>
-          <p className={styles.sectionLabel}>Budget</p>
+          <p className={styles.sectionLabel}>Budget perso</p>
           <ul>
             <li className={styles.navItem}>
               <Link to="/dashboard" className={isActive("/dashboard") ? styles.active : undefined} onClick={onNavigate}>
@@ -37,6 +37,22 @@ export default function LeftMenu({ user, onNavigate }: { user: User; onNavigate?
             </li>
             <li className={styles.navItem}>
               <Link to="/dashboard/annuel" className={isActive("/dashboard/annuel") ? styles.active : undefined} onClick={onNavigate}>
+                <CalendarDays className={styles.navIcon} />
+                Annuel
+              </Link>
+            </li>
+          </ul>
+
+          <p className={styles.sectionLabel}>Budget ArgoWeb</p>
+          <ul>
+            <li className={styles.navItem}>
+              <Link to="/dashboard/pro" className={isActive("/dashboard/pro") ? styles.active : undefined} onClick={onNavigate}>
+                <Briefcase className={styles.navIcon} />
+                Mensuel
+              </Link>
+            </li>
+            <li className={styles.navItem}>
+              <Link to="/dashboard/pro/annuel" className={isActive("/dashboard/pro/annuel") ? styles.active : undefined} onClick={onNavigate}>
                 <CalendarDays className={styles.navIcon} />
                 Annuel
               </Link>

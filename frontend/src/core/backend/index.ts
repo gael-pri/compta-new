@@ -8,6 +8,10 @@ import { ComponentPort } from "../ports/component.port";
 import { BudgetPort } from "@/core/ports/budget.port";
 import { OrganismePort } from "@/core/ports/organisme.port";
 import { PrevisionPort } from "@/core/ports/prevision.port";
+import { BudgetProPort } from "@/core/ports/budget-pro.port";
+import { OrganismeProPort } from "@/core/ports/organisme-pro.port";
+import { PrevisionProPort } from "@/core/ports/prevision-pro.port";
+import { ComptaParamsPort } from "@/core/ports/compta-params.port";
 
 // adapters
 import { graphqlUserAdapter } from "@/adapters/graphql/user.adapter";
@@ -32,6 +36,10 @@ import { directusComponentsAdapter } from "@/adapters/directus/components.adapte
 import { directusBudgetAdapter } from "@/adapters/directus/budget.adapter";
 import { directusOrganismeAdapter } from "@/adapters/directus/organisme.adapter";
 import { directusPrevisionAdapter } from "@/adapters/directus/prevision.adapter";
+import { directusBudgetProAdapter } from "@/adapters/directus/budget-pro.adapter";
+import { directusOrganismeProAdapter } from "@/adapters/directus/organisme-pro.adapter";
+import { directusPrevisionProAdapter } from "@/adapters/directus/prevision-pro.adapter";
+import { directusComptaParamsAdapter } from "@/adapters/directus/compta-params.adapter";
 
 const provider = API_CONFIG.provider;
 
@@ -42,6 +50,10 @@ let components: ComponentPort;
 const budget: BudgetPort = directusBudgetAdapter;
 const organisme: OrganismePort = directusOrganismeAdapter;
 const prevision: PrevisionPort = directusPrevisionAdapter;
+const budgetPro: BudgetProPort = directusBudgetProAdapter;
+const organismePro: OrganismeProPort = directusOrganismeProAdapter;
+const previsionPro: PrevisionProPort = directusPrevisionProAdapter;
+const comptaParams: ComptaParamsPort = directusComptaParamsAdapter;
 
 switch (provider) {
   case "xano":
@@ -82,4 +94,8 @@ export const backend = {
   budget,
   organisme,
   prevision,
+  budgetPro,
+  organismePro,
+  previsionPro,
+  comptaParams,
 };

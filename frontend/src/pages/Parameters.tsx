@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { User } from "@/core/types/user";
 import { Organisme, BudgetType } from "@/core/types/budget";
 import { Prevision, CreatePrevisionInput } from "@/core/types/prevision";
+import { OrganismePro, BudgetProType, PrevisionPro, CreatePrevisionProInput } from "@/core/types/budget-pro";
 import { backend } from "@/core/backend";
 import { useAlert } from "@context/AlertContext";
 import { useGetAllUsers } from "@hooks/useUsers";
@@ -25,17 +26,60 @@ const TYPE_LABELS: Record<BudgetType, string> = {
   aide: "Aides",
 };
 
-const TYPE_COLORS: Record<BudgetType, string> = {
+const TYPE_COLORS: Record<string, string> = {
   revenu: "var(--budget-revenu)",
   charges: "var(--budget-charges)",
   achat: "var(--budget-achat)",
   aide: "var(--budget-aide)",
+  recette: "#22c55e",
+  depense: "#ef4444",
+  dividendes: "#f59e0b",
+  impots: "#8b5cf6",
 };
 
 const BUDGET_TYPES: BudgetType[] = ["revenu", "charges", "achat", "aide"];
 
+const TYPE_LABELS_PRO: Record<BudgetProType, string> = {
+  recette: "Recettes",
+  depense: "Depenses",
+  dividendes: "Dividendes",
+  impots: "Impots",
+};
+
+const BUDGET_PRO_TYPES: BudgetProType[] = ["recette", "depense", "dividendes", "impots"];
+
+type BudgetMode = "perso" | "pro";
+
+function ModeToggle({ mode, setMode }: { mode: BudgetMode; setMode: (m: BudgetMode) => void }) {
+  return (
+    <div style={{ display: "flex", gap: 4, background: "var(--app-bg)", borderRadius: 8, padding: 3, marginBottom: 16 }}>
+      {(["perso", "pro"] as const).map((m) => (
+        <button
+          key={m}
+          onClick={() => setMode(m)}
+          style={{
+            padding: "6px 16px",
+            borderRadius: 6,
+            border: "none",
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: "pointer",
+            fontFamily: "inherit",
+            background: mode === m ? "white" : "transparent",
+            color: mode === m ? "var(--app-text)" : "var(--app-text-secondary)",
+            boxShadow: mode === m ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
+          }}
+        >
+          {m === "perso" ? "Perso" : "Pro"}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export default function Parameters({ user }: { user: User }) {
   const [tab, setTab] = useState<TabKey>("organismes");
+  const [mode, setMode] = useState<BudgetMode>("perso");
 
   return (
     <div>
@@ -67,8 +111,8 @@ export default function Parameters({ user }: { user: User }) {
 
       {/* Tab content */}
       <div style={{ marginTop: 24 }}>
-        {tab === "organismes" && <OrganismesTab />}
-        {tab === "previsions" && <PrevisionsTab />}
+        {tab === "organismes" && <OrganismesTab mode={mode} setMode={setMode} />}
+        {tab === "previsions" && <PrevisionsTab mode={mode} setMode={setMode} />}
         {tab === "profil" && <ProfilTab user={user} />}
         {tab === "admin" && <AdminTab user={user} />}
       </div>
@@ -78,28 +122,33 @@ export default function Parameters({ user }: { user: User }) {
 
 // ─── ORGANISMES TAB ──────────────────────────────────────────────────────────
 
-function OrganismesTab() {
-  const [organismes, setOrganismes] = useState<Organisme[]>([]);
+function OrganismesTab({ mode, setMode }: { mode: BudgetMode; setMode: (m: BudgetMode) => void }) {
+  const [organismes, setOrganismes] = useState<(Organisme | OrganismePro)[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editNom, setEditNom] = useState("");
   const [newNom, setNewNom] = useState("");
-  const [newType, setNewType] = useState<BudgetType>("charges");
+  const [newType, setNewType] = useState<string>(mode === "perso" ? "charges" : "depense");
   const [showAdd, setShowAdd] = useState(false);
   const { addAlert } = useAlert();
 
+  const service = mode === "perso" ? backend.organisme : backend.organismePro;
+  const types = mode === "perso" ? BUDGET_TYPES : BUDGET_PRO_TYPES;
+  const labels = mode === "perso" ? TYPE_LABELS : TYPE_LABELS_PRO;
+
   const fetchOrganismes = useCallback(async () => {
     setLoading(true);
-    const data = await backend.organisme.getAll();
+    const data = await service.getAll();
     setOrganismes(data);
     setLoading(false);
-  }, []);
+  }, [mode]);
 
   useEffect(() => { fetchOrganismes(); }, [fetchOrganismes]);
+  useEffect(() => { setNewType(mode === "perso" ? "charges" : "depense"); setShowAdd(false); }, [mode]);
 
   const handleCreate = async () => {
     if (!newNom.trim()) return;
-    await backend.organisme.create(newNom.trim(), newType);
+    await service.create(newNom.trim(), newType as any);
     setNewNom("");
     setShowAdd(false);
     addAlert("success", "Organisme cree");
@@ -108,7 +157,7 @@ function OrganismesTab() {
 
   const handleUpdate = async (id: number) => {
     if (!editNom.trim()) return;
-    await backend.organisme.update(id, { nom: editNom.trim() });
+    await service.update(id, { nom: editNom.trim() });
     setEditingId(null);
     addAlert("success", "Organisme modifie");
     fetchOrganismes();
@@ -117,7 +166,7 @@ function OrganismesTab() {
   const handleDelete = async (id: number, nom: string) => {
     if (!window.confirm(`Supprimer l'organisme "${nom}" ?`)) return;
     try {
-      await backend.organisme.delete(id);
+      await service.delete(id);
       addAlert("success", "Organisme supprime");
       fetchOrganismes();
     } catch {
@@ -127,14 +176,15 @@ function OrganismesTab() {
 
   if (loading) return <p style={{ color: "var(--app-text-secondary)" }}>Chargement...</p>;
 
-  const grouped = BUDGET_TYPES.reduce((acc, type) => {
+  const grouped = types.reduce((acc, type) => {
     acc[type] = organismes.filter((o) => o.type === type);
     return acc;
-  }, {} as Record<BudgetType, Organisme[]>);
+  }, {} as Record<string, (Organisme | OrganismePro)[]>);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <ModeToggle mode={mode} setMode={setMode} />
         <button onClick={() => setShowAdd(!showAdd)} style={primaryBtnStyle}>
           <Plus size={16} /> Ajouter
         </button>
@@ -156,9 +206,9 @@ function OrganismesTab() {
             </div>
             <div>
               <label style={labelStyle}>Type</label>
-              <select value={newType} onChange={(e) => setNewType(e.target.value as BudgetType)} style={inputStyle}>
-                {BUDGET_TYPES.map((t) => (
-                  <option key={t} value={t}>{TYPE_LABELS[t]}</option>
+              <select value={newType} onChange={(e) => setNewType(e.target.value)} style={inputStyle}>
+                {types.map((t) => (
+                  <option key={t} value={t}>{labels[t as keyof typeof labels]}</option>
                 ))}
               </select>
             </div>
@@ -169,12 +219,12 @@ function OrganismesTab() {
         </div>
       )}
 
-      {BUDGET_TYPES.map((type) => (
+      {types.map((type) => (
         <div key={type} style={cardStyle}>
           <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
             <span style={{ width: 10, height: 10, borderRadius: "50%", background: TYPE_COLORS[type], display: "inline-block" }} />
-            {TYPE_LABELS[type]}
-            <span style={{ fontWeight: 400, color: "var(--app-text-secondary)", fontSize: 13 }}>({grouped[type].length})</span>
+            {labels[type as keyof typeof labels]}
+            <span style={{ fontWeight: 400, color: "var(--app-text-secondary)", fontSize: 13 }}>({(grouped[type] || []).length})</span>
           </h3>
 
           {grouped[type].length === 0 ? (
@@ -221,9 +271,9 @@ function OrganismesTab() {
 
 // ─── PREVISIONS TAB ──────────────────────────────────────────────────────────
 
-function PrevisionsTab() {
-  const [previsions, setPrevisions] = useState<Prevision[]>([]);
-  const [organismes, setOrganismes] = useState<Organisme[]>([]);
+function PrevisionsTab({ mode, setMode }: { mode: BudgetMode; setMode: (m: BudgetMode) => void }) {
+  const [previsions, setPrevisions] = useState<any[]>([]);
+  const [organismes, setOrganismes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
@@ -232,23 +282,31 @@ function PrevisionsTab() {
   const [editNote, setEditNote] = useState("");
   const { addAlert } = useAlert();
 
+  const isPro = mode === "pro";
+  const types = isPro ? BUDGET_PRO_TYPES : BUDGET_TYPES;
+  const labels: Record<string, string> = isPro ? TYPE_LABELS_PRO : TYPE_LABELS;
+  const prevService = isPro ? backend.previsionPro : backend.prevision;
+  const orgService = isPro ? backend.organismePro : backend.organisme;
+  const budgetService = isPro ? backend.budgetPro : backend.budget;
+
   // New form state
-  const [newType, setNewType] = useState<BudgetType>("charges");
+  const [newType, setNewType] = useState<string>(isPro ? "depense" : "charges");
   const [newOrgId, setNewOrgId] = useState<number | "">("");
   const [newNote, setNewNote] = useState("");
   const [newMontant, setNewMontant] = useState("");
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
-    const [p, o] = await Promise.all([backend.prevision.getAll(), backend.organisme.getAll()]);
+    const [p, o] = await Promise.all([prevService.getAll(), orgService.getAll()]);
     setPrevisions(p);
     setOrganismes(o);
     setLoading(false);
-  }, []);
+  }, [mode]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
+  useEffect(() => { setNewType(isPro ? "depense" : "charges"); setShowAdd(false); }, [mode]);
 
-  const getOrgName = (p: Prevision) => {
+  const getOrgName = (p: any) => {
     if (p.organisme_id && typeof p.organisme_id === "object") return p.organisme_id.nom;
     const org = organismes.find((o) => o.id === p.organisme_id);
     return org?.nom || "—";
@@ -256,12 +314,24 @@ function PrevisionsTab() {
 
   const handleCreate = async () => {
     if (!newOrgId || !newMontant) return;
-    await backend.prevision.create({
-      type: newType,
-      organisme_id: newOrgId as number,
-      note: newNote || null,
-      montant: parseFloat(newMontant),
-    });
+    const montant = parseFloat(newMontant);
+    if (isPro) {
+      await prevService.create({
+        type: newType as any,
+        organisme_id: newOrgId as number,
+        note: newNote || null,
+        montant_ht: montant,
+        tva: 20,
+        montant_ttc: montant * 1.2,
+      });
+    } else {
+      await prevService.create({
+        type: newType as any,
+        organisme_id: newOrgId as number,
+        note: newNote || null,
+        montant,
+      } as any);
+    }
     setNewMontant("");
     setNewNote("");
     setNewOrgId("");
@@ -271,10 +341,15 @@ function PrevisionsTab() {
   };
 
   const handleUpdate = async (id: number) => {
-    await backend.prevision.update(id, {
-      montant: parseFloat(editMontant),
-      note: editNote || null,
-    });
+    const montant = parseFloat(editMontant);
+    const updateData: any = { note: editNote || null };
+    if (isPro) {
+      updateData.montant_ht = montant;
+      updateData.montant_ttc = montant * 1.2;
+    } else {
+      updateData.montant = montant;
+    }
+    await prevService.update(id, updateData);
     setEditingId(null);
     addAlert("success", "Prevision modifiee");
     fetchAll();
@@ -282,7 +357,7 @@ function PrevisionsTab() {
 
   const handleDelete = async (id: number) => {
     if (!window.confirm("Supprimer cette prevision ?")) return;
-    await backend.prevision.delete(id);
+    await prevService.delete(id);
     addAlert("success", "Prevision supprimee");
     fetchAll();
   };
@@ -296,7 +371,7 @@ function PrevisionsTab() {
       const currentYear = now.getFullYear();
 
       // Get all existing budget entries for remaining months
-      const allEntries = await backend.budget.getAll({ annee: currentYear });
+      const allEntries = await budgetService.getAll({ annee: currentYear });
 
       let created = 0;
       let updated = 0;
@@ -320,20 +395,29 @@ function PrevisionsTab() {
 
           if (!existing) {
             // Create new entry with statut "en_attente"
-            await backend.budget.create({
+            const createData: any = {
               type: prev.type,
-              organisme: org.nom.toLowerCase(),
               organisme_id: orgId,
-              montant: prev.montant,
               mois,
               annee: currentYear,
               note: prev.note,
               statut: "en_attente",
-            });
+            };
+            if (isPro) {
+              createData.montant_ht = prev.montant_ht;
+              createData.tva = prev.tva;
+              createData.montant_ttc = prev.montant_ttc;
+            } else {
+              createData.organisme = org.nom.toLowerCase();
+              createData.montant = prev.montant;
+            }
+            await budgetService.create(createData);
             created++;
           } else if (existing.statut === "en_attente") {
-            // Update only if en_attente
-            await backend.budget.update(existing.id, { montant: prev.montant });
+            const updateData: any = isPro
+              ? { montant_ht: prev.montant_ht, montant_ttc: prev.montant_ttc }
+              : { montant: prev.montant };
+            await budgetService.update(existing.id, updateData);
             updated++;
           }
           // If statut === "valide" → skip
@@ -352,14 +436,16 @@ function PrevisionsTab() {
 
   if (loading) return <p style={{ color: "var(--app-text-secondary)" }}>Chargement...</p>;
 
-  const grouped = BUDGET_TYPES.reduce((acc, type) => {
-    acc[type] = previsions.filter((p) => p.type === type);
+  const grouped = types.reduce((acc, type) => {
+    acc[type] = previsions.filter((p: any) => p.type === type);
     return acc;
-  }, {} as Record<BudgetType, Prevision[]>);
+  }, {} as Record<string, any[]>);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-      <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+        <ModeToggle mode={mode} setMode={setMode} />
+        <div style={{ display: "flex", gap: 8 }}>
         <button onClick={() => setShowAdd(!showAdd)} style={primaryBtnStyle}>
           <Plus size={16} /> Ajouter
         </button>
@@ -371,6 +457,7 @@ function PrevisionsTab() {
           {applying ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <Play size={16} />}
           Appliquer les previsions
         </button>
+        </div>
       </div>
 
       {showAdd && (
@@ -378,9 +465,9 @@ function PrevisionsTab() {
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
             <div>
               <label style={labelStyle}>Type</label>
-              <select value={newType} onChange={(e) => { setNewType(e.target.value as BudgetType); setNewOrgId(""); }} style={inputStyle}>
-                {BUDGET_TYPES.map((t) => (
-                  <option key={t} value={t}>{TYPE_LABELS[t]}</option>
+              <select value={newType} onChange={(e) => { setNewType(e.target.value); setNewOrgId(""); }} style={inputStyle}>
+                {types.map((t) => (
+                  <option key={t} value={t}>{labels[t]}</option>
                 ))}
               </select>
             </div>
@@ -415,12 +502,12 @@ function PrevisionsTab() {
         </div>
       )}
 
-      {BUDGET_TYPES.map((type) => (
-        grouped[type].length > 0 && (
+      {types.map((type) => (
+        (grouped[type] || []).length > 0 && (
           <div key={type} style={cardStyle}>
             <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ width: 10, height: 10, borderRadius: "50%", background: TYPE_COLORS[type], display: "inline-block" }} />
-              {TYPE_LABELS[type]}
+              {labels[type]}
             </h3>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto auto", gap: "8px 16px", alignItems: "center" }}>
@@ -458,9 +545,9 @@ function PrevisionsTab() {
                   <div key={p.id} style={{ display: "contents" }}>
                     <span style={{ fontSize: 14 }}>{getOrgName(p)}</span>
                     <span style={{ fontSize: 13, color: "var(--app-text-secondary)" }}>{p.note || "—"}</span>
-                    <span style={{ fontSize: 14, fontWeight: 600, textAlign: "right" }}>{p.montant}€</span>
+                    <span style={{ fontSize: 14, fontWeight: 600, textAlign: "right" }}>{isPro ? p.montant_ht : p.montant}€</span>
                     <div style={{ display: "flex", gap: 4 }}>
-                      <button onClick={() => { setEditingId(p.id); setEditMontant(String(p.montant)); setEditNote(p.note || ""); }} style={iconBtnStyle}>
+                      <button onClick={() => { setEditingId(p.id); setEditMontant(String(isPro ? p.montant_ht : p.montant)); setEditNote(p.note || ""); }} style={iconBtnStyle}>
                         <Pencil size={14} color="var(--app-text-secondary)" />
                       </button>
                       <button onClick={() => handleDelete(p.id)} style={iconBtnStyle}>

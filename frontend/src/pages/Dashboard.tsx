@@ -4,6 +4,8 @@ import { useAuth } from "@hooks/useAuth";
 import DashboardLayout from "../layouts/DashboardLayout";
 import BudgetDashboard from "./BudgetDashboard";
 import BudgetAnnuel from "./BudgetAnnuel";
+import BudgetProDashboard from "./BudgetProDashboard";
+import BudgetProAnnuel from "./BudgetProAnnuel";
 import Parameters from "./Parameters";
 
 export default function Dashboard() {
@@ -17,6 +19,8 @@ export default function Dashboard() {
       <Routes>
         <Route index element={<BudgetDashboard />} />
         <Route path="annuel" element={<BudgetAnnuel />} />
+        <Route path="pro" element={<BudgetProDashboard />} />
+        <Route path="pro/annuel" element={<BudgetProAnnuel />} />
         <Route path="parameters" element={<Parameters user={user} />} />
       </Routes>
     </DashboardLayout>
