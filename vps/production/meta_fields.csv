@@ -1,0 +1,36 @@
+id,collection,field,special,interface,options,display,display_options,readonly,hidden,sort,width,translations,note,conditions,required,group,validation,validation_message,searchable
+26,organisme_pro,id,,input,,,,t,t,1,full,,,,f,,,,t
+27,organisme_pro,nom,,input,,,,f,f,1,full,,,,t,,,,t
+28,organisme_pro,type,,select-dropdown,"{""choices"":[{""text"":""Depense"",""value"":""depense""},{""text"":""Recette"",""value"":""recette""},{""text"":""Dividendes"",""value"":""dividendes""},{""text"":""Impots"",""value"":""impots""}]}",,,f,f,2,full,,,,t,,,,t
+29,organisme_pro,date_created,date-created,datetime,,,,t,t,3,full,,,,f,,,,t
+30,organisme_pro,date_updated,date-updated,datetime,,,,t,t,4,full,,,,f,,,,t
+31,budget_pro,id,,input,,,,t,t,1,full,,,,f,,,,t
+32,budget_pro,type,,select-dropdown,"{""choices"":[{""text"":""Depense"",""value"":""depense""},{""text"":""Recette"",""value"":""recette""},{""text"":""Dividendes"",""value"":""dividendes""},{""text"":""Impots"",""value"":""impots""}]}",,,f,f,1,full,,,,t,,,,t
+33,budget_pro,montant_ht,,input,,,,f,f,3,full,,,,t,,,,t
+34,budget_pro,tva,,input,,,,f,f,4,full,,,,f,,,,t
+35,budget_pro,montant_ttc,,input,,,,f,f,5,full,,,,f,,,,t
+36,budget_pro,mois,,input,,,,f,f,6,full,,,,t,,,,t
+37,budget_pro,annee,,input,,,,f,f,7,full,,,,t,,,,t
+38,budget_pro,note,,input,,,,f,f,8,full,,,,f,,,,t
+39,budget_pro,statut,,select-dropdown,"{""choices"":[{""text"":""Valide"",""value"":""valide""},{""text"":""En attente"",""value"":""en_attente""},{""text"":""Annule"",""value"":""annule""}]}",,,f,f,9,full,,,,f,,,,t
+40,budget_pro,date_created,date-created,datetime,,,,t,t,10,full,,,,f,,,,t
+41,budget_pro,date_updated,date-updated,datetime,,,,t,t,11,full,,,,f,,,,t
+42,budget_pro,organisme_id,m2o,select-dropdown-m2o,"{""template"":""{{nom}}""}",related-values,"{""template"":""{{nom}}""}",f,f,2,full,,,,f,,,,t
+43,prevision_pro,id,,input,,,,t,t,1,full,,,,f,,,,t
+44,prevision_pro,type,,select-dropdown,"{""choices"":[{""text"":""Depense"",""value"":""depense""},{""text"":""Recette"",""value"":""recette""},{""text"":""Dividendes"",""value"":""dividendes""},{""text"":""Impots"",""value"":""impots""}]}",,,f,f,1,full,,,,t,,,,t
+45,prevision_pro,note,,input,,,,f,f,3,full,,,,f,,,,t
+46,prevision_pro,montant_ht,,input,,,,f,f,4,full,,,,t,,,,t
+47,prevision_pro,tva,,input,,,,f,f,5,full,,,,f,,,,t
+48,prevision_pro,montant_ttc,,input,,,,f,f,6,full,,,,f,,,,t
+49,prevision_pro,date_created,date-created,datetime,,,,t,t,7,full,,,,f,,,,t
+50,prevision_pro,date_updated,date-updated,datetime,,,,t,t,8,full,,,,f,,,,t
+51,prevision_pro,organisme_id,m2o,select-dropdown-m2o,"{""template"":""{{nom}}""}",related-values,"{""template"":""{{nom}}""}",f,f,2,full,,,,f,,,,t
+52,budget_pro,jour,,input,,,,f,f,8,full,,,,f,,,,t
+53,budget_pro,argent_avance,,input,,,,f,f,10,full,,Montant avance de poche (info seulement),,f,,,,t
+54,budget_pro,tva_reglee,,boolean,,,,f,t,11,full,,,,f,,,,t
+55,compta_parameters,id,,input,,,,t,t,1,full,,,,f,,,,t
+56,compta_parameters,key,,input,,,,f,f,1,full,,,,t,,,,t
+57,compta_parameters,label,,input,,,,f,f,2,full,,,,f,,,,t
+58,compta_parameters,value,,input,,,,f,f,3,full,,,,f,,,,t
+59,compta_parameters,date_created,date-created,datetime,,,,t,t,4,full,,,,f,,,,t
+60,compta_parameters,date_updated,date-updated,datetime,,,,t,t,5,full,,,,f,,,,t

@@ -66,6 +66,18 @@ html, body {
   to { transform: rotate(360deg); }
 }
 
+/* ─── Bilan grid ───────────────────────────────────────── */
+
+.bilan-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.bilan-col-left {
+  border-right: 1px solid var(--app-border);
+}
+
 /* ─── Modal ────────────────────────────────────────────── */
 
 .modal-overlay {
@@ -202,6 +214,19 @@ html, body {
     min-width: 45%;
     flex-shrink: 0;
     scroll-snap-align: start;
+  }
+
+  table th, table td {
+    white-space: nowrap;
+  }
+
+  .bilan-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bilan-col-left {
+    border-right: none;
+    border-bottom: 1px solid var(--app-border);
   }
 
   .modal-overlay {

@@ -1,0 +1,5 @@
+collection,icon,note,display_template,hidden,singleton,translations,archive_field,archive_app_filter,archive_value,unarchive_value,sort_field,accountability,color,item_duplication_fields,sort,group,collapse,preview_url,versioning
+organisme_pro,business,Organismes lies au budget pro,,f,f,,,t,,,,all,,,,,open,,f
+budget_pro,account_balance,Budget professionnel ArgoWeb,,f,f,,,t,,,,all,,,,,open,,f
+prevision_pro,trending_up,Previsions budget pro,,f,f,,,t,,,,all,,,,,open,,f
+compta_parameters,settings,Parametres applicatifs compta,,f,f,,,t,,,,all,,,,,open,,f

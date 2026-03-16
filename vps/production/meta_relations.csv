@@ -1,0 +1,3 @@
+id,many_collection,many_field,one_collection,one_field,one_collection_field,one_allowed_collections,junction_field,sort_field,one_deselect_action
+3,budget_pro,organisme_id,organisme_pro,budgets,,,,,nullify
+4,prevision_pro,organisme_id,organisme_pro,previsions,,,,,nullify
