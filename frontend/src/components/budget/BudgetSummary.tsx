@@ -51,7 +51,7 @@ function TrendArrow({ current, previous, positive }: { current: number; previous
 
 export default function BudgetSummary({ summary, prevSummary }: Props) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 24 }}>
+    <div className="summary-cards">
       {cards.map(({ key, label, icon: Icon, color, bg, positive }) => (
         <div
           key={key}

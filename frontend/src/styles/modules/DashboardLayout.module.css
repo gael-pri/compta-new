@@ -33,10 +33,17 @@
   color: var(--app-text);
 }
 
-.mobileLogo {
-  font-size: 1.1rem;
+.mobileTitle {
+  font-size: 1rem;
   font-weight: 700;
   color: var(--app-text);
+  line-height: 1.2;
+}
+
+.mobileSubtitle {
+  font-size: 0.75rem;
+  color: var(--app-text-secondary);
+  margin-top: 1px;
 }
 
 /* Mobile overlay */
