@@ -261,7 +261,7 @@ function AnnualTableBody({ rows }: { rows: (AggregatedRow & { note?: string })[]
               </td>
               <td style={{ ...tdStyle, fontWeight: 500, textTransform: "capitalize" }}>{row.organisme}</td>
               <td style={{ ...tdStyle, color: "var(--app-text-secondary)" }}>{row.note || "—"}</td>
-              <td style={{ ...tdStyle, textAlign: "center", color: "var(--app-text-secondary)" }}>{row.count}</td>
+              <td style={{ ...tdStyle, textAlign: "left", color: "var(--app-text-secondary)" }}>{row.count}</td>
               <td></td>
               <td style={{ ...tdStyle, color: "var(--app-text-secondary)", fontVariantNumeric: "tabular-nums" }}>
                 {Math.round(row.montant / row.moisCount).toLocaleString("fr-FR")} €

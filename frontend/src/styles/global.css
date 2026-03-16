@@ -151,6 +151,10 @@ html, body {
     align-items: flex-start;
   }
 
+  .page-header > div:first-child {
+    display: none;
+  }
+
   .page-header-actions {
     width: 100%;
   }
@@ -162,11 +166,13 @@ html, body {
 
   .page-nav {
     gap: 8px;
+    flex-wrap: nowrap;
   }
 
   .page-nav select {
     margin-left: 0 !important;
-    width: 100%;
+    flex: 1;
+    min-width: 0;
   }
 
   .summary-cards {
