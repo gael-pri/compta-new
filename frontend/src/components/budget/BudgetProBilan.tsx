@@ -76,9 +76,9 @@ export default function BudgetProBilan({ entries, tvaCumul, onPayTva, mois, anne
         <span style={{ fontWeight: 700, fontSize: 15 }}>Bilan {mois > 0 ? "mensuel" : "annuel"}</span>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
+      <div className="bilan-grid">
         {/* Left column */}
-        <div style={{ borderRight: "1px solid var(--app-border)" }}>
+        <div className="bilan-col-left">
           <Row label="Total recettes HT" value={`${fmt(bilan.totalRecettesHT)} €`} color="#22c55e" />
           <Row label="Total depenses HT" value={`${fmt(bilan.totalDepensesHT)} €`} color="#ef4444" />
           <Row label="Resultat fiscal" value={`${fmt(bilan.resultatFiscal)} €`} bold />
