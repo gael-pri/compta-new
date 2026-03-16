@@ -210,7 +210,7 @@ export default function BudgetChart({ entries, mois, annee, layout = "mensuel" }
           </div>
 
           <h3 style={chartTitleStyle}>{chargesTitle}</h3>
-          <div style={{ width: "100%" }}>
+          <div style={{ width: "100%", minWidth: 0 }}>
             <GraphJs
               type="bar"
               data={chargesData}
@@ -242,7 +242,7 @@ export default function BudgetChart({ entries, mois, annee, layout = "mensuel" }
               {coursesTotal.toLocaleString("fr-FR")} €
             </span>
           </div>
-          <div style={{ width: "100%" }}>
+          <div style={{ width: "100%", minWidth: 0 }}>
             <GraphJs
               type="line"
               data={coursesData}
@@ -292,6 +292,8 @@ const cardStyle: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
+  overflow: "hidden",
+  minWidth: 0,
 };
 
 const chartTitleStyle: React.CSSProperties = {
