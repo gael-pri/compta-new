@@ -1,0 +1,133 @@
+.bgWrapper {
+  background: #F9FAFB; /* gris très clair */
+  padding: 18px;
+  border-radius: 0.5rem;
+  width: 100%;
+  border: 1.5px dashed #CCCCCC; /* gris plus foncé, pointillé très fin */
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.bgWrapper:hover {
+  border-color: #8FBFFC; /* bleu au hover */
+}
+
+.dropZone {
+  position: relative;
+  padding: 1.5rem;
+  border: 1.5px solid #D1D5DB; /* gris légèrement foncé, continu */
+  border-radius: 0.5rem;
+  background: #F2EEE9; /* sand */
+  transition: border-color 0.3s, background 0.3s;
+  cursor: pointer;
+}
+.dropZone:hover {
+  border-color: #8FBFFC;
+  box-shadow: 0 0 0 2px #2563eb22;
+}
+.dropZone:active {
+  border-color: #8FBFFC;
+}
+
+input[type="file"].hidden {
+  display: none !important;
+}
+
+.progressBarFill {
+  background-color: #2563eb; /* blue-600 */
+  height: 0.625rem;
+  width: 50%;
+  border-radius: 9999px;
+}
+
+.button {
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.buttonEnabled {
+  color: #2563eb; /* blue-600 */
+}
+
+.buttonDisabled {
+  color: #9ca3af; /* gray-400 */
+}
+
+.description {
+  font-size: 0.875rem;
+  color: #6b7280; /* gray-500 */
+  margin-left: 0.25rem;
+}
+
+.groupImageInfos{
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 1rem;
+}
+.uploadedImage {
+  width: 90px;
+  height: 90px;
+  border-radius: 0.5rem;
+  border: 1px solid #9ca3af;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+.infos {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* ← Aligne titre en haut, boutons en bas */
+  flex: 1;
+  width: 60%;
+}
+
+.fileTitle {
+  font-size: 1rem;
+  color: #374151;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fileMeta {
+  font-size: 0.875rem;
+  color: #6b7280; /* gray-500 */
+  margin-top: 0.25rem;
+}
+
+.fileList {
+  padding: 24px 8px;
+}
+
+.deleteFileList {
+  padding: 8px;
+}
+
+.separator {
+  padding: 12px;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+.sendAction {
+  flex: 1 1 auto;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.deleteTitle { font-size: 1rem; font-weight: 600;}

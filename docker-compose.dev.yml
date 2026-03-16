@@ -1,0 +1,74 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: ${PROJECT_NAME}_frontend
+    command: sh -c "npm run dev -- --host"
+    environment:
+      VITE_BACKEND_PROVIDER: ${VITE_BACKEND_PROVIDER}
+      VITE_DIRECTUS_URL: ${VITE_DIRECTUS_URL}
+    ports:
+      - "${FRONTEND_PORT}:5173"
+    depends_on:
+      - directus
+    volumes:
+      - ./frontend:/usr/src/app:cached
+      - /usr/src/app/node_modules
+
+  db:
+    image: postgres:15
+    container_name: ${PROJECT_NAME}_postgres_directus
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - directus_db_data:/var/lib/postgresql/data
+
+  directus:
+    image: directus/directus:latest
+    container_name: ${PROJECT_NAME}_directus
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${DIRECTUS_PORT}:8055"
+    volumes:
+      - ./uploads:/directus/uploads
+      - ./extensions:/directus/extensions
+    environment:
+      KEY: devkey
+      SECRET: supersecret
+      DB_CLIENT: pg
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: ${FRONTEND_URL}
+      CORS_METHODS: "GET,POST,PATCH,DELETE,OPTIONS"
+      CORS_HEADERS: "Content-Type,Authorization"
+      CORS_CREDENTIALS: "true"
+      EMAIL_FROM: ${EMAIL_FROM}
+      EMAIL_MAILGUN_API_KEY: ${EMAIL_MAILGUN_API_KEY}
+      EMAIL_MAILGUN_DOMAIN: ${EMAIL_MAILGUN_DOMAIN}
+      EMAIL_MAILGUN_HOST: ${EMAIL_MAILGUN_HOST}
+      EMAIL_TRANSPORT: ${EMAIL_TRANSPORT}
+      PUBLIC_URL: ${PUBLIC_URL}
+
+volumes:
+  directus_db_data:

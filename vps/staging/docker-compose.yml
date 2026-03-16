@@ -1,0 +1,28 @@
+name: ${PROJECT_NAME}-${ENVIRONMENT}
+
+services:
+  frontend:
+    image: ghcr.io/${REPO_NAME}-${ENVIRONMENT}-frontend:latest
+    container_name: ${PROJECT_NAME}_${ENVIRONMENT}_frontend
+    restart: always
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+          pids: 100
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    ports:
+      - "${FRONTEND_PORT}:4173"
+    networks:
+      - ${PROJECT_NAME}-${ENVIRONMENT}
+
+networks:
+  compta-new-staging:
+    name: ${PROJECT_NAME}-${ENVIRONMENT}
+    driver: bridge
+    external: true

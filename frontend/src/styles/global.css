@@ -1,0 +1,67 @@
+@import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --app-primary: #6366f1;
+  --app-primary-light: #818cf8;
+  --app-primary-dark: #4f46e5;
+  --app-accent: #f59e0b;
+  --app-bg: #f8fafc;
+  --app-bg-secondary: #ffffff;
+  --app-text: #0f172a;
+  --app-text-secondary: #64748b;
+  --app-border: #e2e8f0;
+  --app-error: #ef4444;
+  --app-success: #22c55e;
+  --app-warning: #f59e0b;
+
+  /* Budget category colors */
+  --budget-revenu: #22c55e;
+  --budget-charges: #ef4444;
+  --budget-achat: #f59e0b;
+  --budget-aide: #3b82f6;
+
+  /* Sidebar */
+  --sidebar-width: 260px;
+  --sidebar-bg: #0f172a;
+  --sidebar-text: #94a3b8;
+  --sidebar-text-active: #ffffff;
+  --sidebar-hover: #1e293b;
+  --sidebar-accent: #6366f1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-y: auto;
+  font-family: 'Plus Jakarta Sans', 'Manrope', system-ui, sans-serif;
+  background-color: var(--app-bg);
+  color: var(--app-text);
+}
+
+.icon-button {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.hide-scrollbar {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

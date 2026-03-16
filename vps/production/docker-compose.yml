@@ -1,0 +1,91 @@
+name: ${PROJECT_NAME}-${ENVIRONMENT}
+
+services:
+  frontend:
+    image: ghcr.io/${REPO_NAME}-${ENVIRONMENT}-frontend:latest
+    container_name: ${PROJECT_NAME}_${ENVIRONMENT}_frontend
+    restart: always
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+          pids: 100
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    depends_on:
+      - directus
+    ports:
+      - "${FRONTEND_PORT}:4173"
+    networks:
+      - ${PROJECT_NAME}-${ENVIRONMENT}
+
+  db:
+    image: postgres:15
+    container_name: ${PROJECT_NAME}_${ENVIRONMENT}_postgres_directus
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - directus_db_data:/var/lib/postgresql/data
+    networks:
+      - ${PROJECT_NAME}-${ENVIRONMENT}
+
+  directus:
+    image: directus/directus:latest
+    container_name: ${PROJECT_NAME}_${ENVIRONMENT}_directus
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${DIRECTUS_PORT}:8055"
+    volumes:
+      - ./uploads:/directus/uploads
+      - ./extensions:/directus/extensions
+    environment:
+      KEY: ${DIRECTUS_KEY}
+      SECRET: ${DIRECTUS_SECRET}
+      DB_CLIENT: pg
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      CORS_METHODS: "GET,POST,PATCH,DELETE,OPTIONS"
+      CORS_HEADERS: "Content-Type,Authorization"
+      CORS_CREDENTIALS: "true"
+      EMAIL_FROM: ${EMAIL_FROM}
+      EMAIL_MAILGUN_API_KEY: ${EMAIL_MAILGUN_API_KEY}
+      EMAIL_MAILGUN_DOMAIN: ${EMAIL_MAILGUN_DOMAIN}
+      EMAIL_MAILGUN_HOST: ${EMAIL_MAILGUN_HOST}
+      EMAIL_TRANSPORT: ${EMAIL_TRANSPORT}
+      PUBLIC_URL: ${PUBLIC_URL}
+    networks:
+      - ${PROJECT_NAME}-${ENVIRONMENT}
+
+volumes:
+  directus_db_data:
+
+networks:
+  compta-new-production:
+    name: ${PROJECT_NAME}-${ENVIRONMENT}
+    driver: bridge
+    external: true

@@ -1,0 +1,162 @@
+.drag-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.drag-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.drag-item:focus-within {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.drag-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.drag-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.time-slot {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.time-slot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.time-slot-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.globalActivity {
+  width: 100%;
+}
+.activities {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 4px;
+}
+
+.activity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+}
+
+.drag-handle {
+  cursor: grab;
+  color: #888;
+}
+
+.remove-button {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  cursor: pointer;
+}
+
+.addButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #E5E7EB;
+  border-radius: 24px;
+  padding: 8px 12px;
+  margin: 8px 0px;
+  width: 100%;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+  font-family: "Plus Jakarta Sans, sans-serif";
+  font-size: 14px;
+}
+
+.add-button:hover {
+  background: #0056b3;
+}
+
+.inputActivity {
+  border: 1px solid #E5E7EB;
+  border-radius: 24px;
+  padding: 8px 12px;
+  width: 100%;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+  font-family: "Plus Jakarta Sans, sans-serif";
+  font-size: 14px;
+}
+
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab; /* Ensure grab cursor is applied */
+  color: white; /* Default color */
+  transition: color 0.3s ease;
+}
+
+.dragHandle:active {
+  cursor: grabbing; /* Change to grabbing when active */
+}
+
+.dragHandle:hover {
+  color: darkgray; /* Change to gray on hover */
+}
+
+.dragLines {
+  width: 20px;
+  height: 4px;
+  background-color: currentColor; /* Use current text color */
+  border-radius: 2px;
+  position: relative;
+}
+
+.dragLines::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  width: 20px;
+  height: 4px;
+  background-color: currentColor; /* Use current text color */
+  border-radius: 2px;
+}

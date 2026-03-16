@@ -1,0 +1,70 @@
+.card {
+  background-color: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(229, 231, 235, 1);
+}
+
+.cardHeader {
+  padding: 1.5rem 1.5rem 0.75rem;
+  text-align: left;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.25;
+}
+
+.cardDescription {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  color: #6B7280;
+  line-height: 1.25;
+}
+
+.cardContent {
+  padding: 0 1rem 1rem;
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cardFooter {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgba(229, 231, 235, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.trendContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1;
+  color: #111827;
+}
+
+.trendUp {
+  color: #10B981;
+}
+
+.trendDown {
+  color: #EF4444;
+}
+
+.footerDescription {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #6B7280;
+  line-height: 1.25;
+} 

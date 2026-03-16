@@ -1,0 +1,90 @@
+.profileBadge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  cursor: pointer;
+}
+
+.text {
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  text-transform: capitalize;
+}
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center horizontally */
+  justify-content: center; /* Center vertically */
+  background-color: bisque;
+  border-radius: 100%;
+  color: darkslategray;
+  padding: 4px 24px;
+  position: absolute;
+  top: -210px;
+  left: 60%;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: 175px;
+  height: 150px;
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow: 0 4px 8px rgba(107, 166, 182, 0.493);
+}
+
+.bulle1 {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  background-color: bisque;
+  border-radius: 24px;
+  color: darkslategray;
+  padding: 1px;
+  position: absolute;
+  top: -50px;
+  left: 80px;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: 24px;
+  height: 22px;
+}
+.bulle2 {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  background-color: bisque;
+  border-radius: 24px;
+  color: darkslategray;
+  padding: 1px;
+  position: absolute;
+  top: -20px;
+  left: 65px;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: 12px;
+  height: 12px;
+}
+
+.modal ul li {
+  font-size: 1rem;
+  color: darkslategray;
+  width: 100%;
+  line-height: 12px;
+}
+
+.modal ul li .lien {
+  text-align: left;
+  font-size: 1rem;
+  color: darkslategray;
+  padding: 8px 12px;
+}
+
+.modal ul li .lien:hover {
+  text-align: left;
+  font-size: 1rem;
+  color: white;
+  background-color: gray;
+  border-radius: 18px;
+  
+}

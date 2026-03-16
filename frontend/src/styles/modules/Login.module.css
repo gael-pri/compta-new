@@ -1,0 +1,117 @@
+.container {
+  background: linear-gradient(to bottom, #0f172a, #1e293b, #0f172a);
+}
+
+.hero {
+  min-height: 67vh;
+  position: relative;
+  padding: 1.5rem 1rem 2.5rem 1rem;
+  text-align: center;
+  overflow: hidden;
+}
+
+.heroBackground {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(6, 182, 212, 0.1),
+    rgba(59, 130, 246, 0.1),
+    rgba(139, 92, 246, 0.1)
+  );
+}
+.heroContent button {
+  position: relative;
+  z-index: 100; /* Placer les boutons au premier plan */
+}
+.description {
+  font-size: 1.5rem;
+  color: #d1d5db;
+  margin-bottom: 1rem;
+  font-weight: 300;
+}
+.subDescription {
+  font-size: 1.125rem;
+  color: #9ca3af;
+  max-width: 48rem;
+  margin: 0 auto 2rem auto;
+}
+.button {
+  padding: 0.75rem 2rem;
+  background-color: #06b6d4;
+  color: white;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 15px rgba(6, 182, 212, 0.3);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #0891b2;
+  box-shadow: 0 15px 25px rgba(6, 182, 212, 0.2);
+}
+
+/* Auth form styles */
+.authTitle {
+  font-family: Poppins, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--app-text, #1e293b);
+  margin-bottom: 0.5rem;
+}
+
+.authTitle::first-letter {
+  text-transform: uppercase;
+}
+
+.authInput {
+  font-family: Manrope, sans-serif;
+  padding: 12px;
+  height: 46px;
+  width: 95%;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid var(--app-border, #e2e8f0);
+  font-size: 15px;
+  background-color: #fff;
+  color: var(--app-text, #1e293b);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.authInput:focus {
+  outline: none;
+  border-color: var(--app-primary, #2563eb);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.authInput::placeholder {
+  opacity: 1;
+  color: var(--app-text-secondary, #64748b);
+  font-family: Manrope, sans-serif;
+}
+
+.authSubmitBtn {
+  font-family: Manrope, sans-serif;
+  width: 100%;
+  height: 48px;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background-color: var(--app-primary, #2563eb);
+  color: #fff;
+  transition: all 0.2s ease;
+}
+
+.authSubmitBtn:hover {
+  opacity: 0.9;
+}
+
+.authSubmitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
