@@ -75,14 +75,14 @@ export default function BudgetDashboard() {
   return (
     <div>
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+      <div className="page-header">
         <div>
           <h1 style={{ fontSize: "1.75rem", fontWeight: 700, margin: 0 }}>Budget mensuel</h1>
           <p style={{ color: "var(--app-text-secondary)", margin: "4px 0 0", fontSize: 14 }}>
             Suivi des revenus et depenses
           </p>
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div className="page-header-actions">
           <button
             onClick={() => setShowCharts(!showCharts)}
             style={{
@@ -113,7 +113,7 @@ export default function BudgetDashboard() {
       </div>
 
       {/* Month navigator */}
-      <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
+      <div className="page-nav">
         <button onClick={handlePrevMonth} style={navBtnStyle}><ChevronLeft size={18} /></button>
         <span style={{ fontSize: 16, fontWeight: 600, minWidth: 160, textAlign: "center" }}>
           {moisLabels[mois - 1]} {annee}
