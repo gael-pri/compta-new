@@ -20,6 +20,7 @@ export interface BudgetProEntry {
   note?: string | null;
   statut?: string | null;
   argent_avance?: number | null;
+  piece_jointe?: string | null;
   date_created?: string | null;
   date_updated?: string | null;
 }
@@ -43,6 +44,7 @@ export interface CreateBudgetProInput {
   note?: string | null;
   statut?: string;
   argent_avance?: number | null;
+  piece_jointe?: string | null;
 }
 
 export interface UpdateBudgetProInput extends Partial<CreateBudgetProInput> {}

@@ -18,6 +18,7 @@ function mapEntry(item: any): BudgetProEntry {
     note: item.note,
     statut: item.statut,
     argent_avance: item.argent_avance ?? 0,
+    piece_jointe: item.piece_jointe ?? null,
     date_created: item.date_created,
     date_updated: item.date_updated,
   };

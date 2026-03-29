@@ -3,7 +3,9 @@ import { useBudgetPro } from "@hooks/useBudgetPro";
 import { BudgetProEntry, BudgetProType, BudgetProFilters, CreateBudgetProInput, OrganismePro } from "@/core/types/budget-pro";
 import { backend } from "@/core/backend";
 import BudgetProBilan from "@components/budget/BudgetProBilan";
-import { Plus, ChevronLeft, ChevronRight, Pencil, Trash2, Check, X } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight, Pencil, Trash2, Check, X, Eye, Paperclip, XCircle } from "lucide-react";
+import { uploadFiles } from "@directus/sdk";
+import { directusClient } from "@lib/directusClient";
 
 const moisLabels = [
   "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin",
@@ -446,6 +448,7 @@ function ProTable({
                 <th style={{ ...thStyle, textAlign: "right" }}>HT</th>
                 <th style={{ ...thStyle, textAlign: "right" }}>TVA%</th>
                 <th style={{ ...thStyle, ...stickyTTCStyle, textAlign: "right" }}>TTC</th>
+                <th style={{ ...thStyle, width: 32, textAlign: "center" }}>PJ</th>
                 <th style={{ ...thStyle, ...stickyActionsStyle, textAlign: "right", width: 80 }}>Actions</th>
               </tr>
             </thead>
@@ -488,6 +491,21 @@ function ProTable({
                   </td>
                   <td style={{ ...tdStyle, ...stickyTTCStyle, textAlign: "right", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
                     {entry.montant_ttc.toLocaleString("fr-FR")} €
+                  </td>
+                  <td style={{ ...tdStyle, textAlign: "center" }}>
+                    {entry.piece_jointe ? (
+                      <a
+                        href={`${import.meta.env.VITE_DIRECTUS_URL}/assets/${entry.piece_jointe}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ ...actionBtn, color: "var(--app-primary)", display: "inline-flex" }}
+                        title="Voir la piece jointe"
+                      >
+                        <Eye size={16} />
+                      </a>
+                    ) : (
+                      <span style={{ color: "var(--app-border)" }}>—</span>
+                    )}
                   </td>
                   <td style={{ ...tdStyle, ...stickyActionsStyle, textAlign: "right" }}>
                     <button onClick={() => onEdit(entry)} style={actionBtn} title="Modifier">
@@ -533,6 +551,8 @@ function BudgetProForm({
   const [note, setNote] = useState(entry?.note || "");
   const [argentAvance, setArgentAvance] = useState(entry?.argent_avance?.toString() || "0");
   const [statut, setStatut] = useState(entry?.statut || "valide");
+  const [pieceJointe, setPieceJointe] = useState<string | null>(entry?.piece_jointe ?? null);
+  const [uploadingFile, setUploadingFile] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   // Organismes
@@ -560,8 +580,29 @@ function BudgetProForm({
       setNote(entry.note || "");
       setArgentAvance(entry.argent_avance?.toString() || "0");
       setStatut(entry.statut || "valide");
+      setPieceJointe(entry.piece_jointe ?? null);
     }
   }, [entry]);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingFile(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const uploaded = await directusClient.request(uploadFiles(formData));
+      setPieceJointe(uploaded.id);
+    } catch {
+      alert("Erreur lors de l'upload du fichier");
+    } finally {
+      setUploadingFile(false);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setPieceJointe(null);
+  };
 
   // Auto-calculate TTC when HT or TVA changes
   useEffect(() => {
@@ -620,6 +661,7 @@ function BudgetProForm({
         note: note || null,
         statut,
         argent_avance: parseFloat(argentAvance) || 0,
+        piece_jointe: pieceJointe,
       });
       onClose();
     } finally {
@@ -820,6 +862,42 @@ function BudgetProForm({
                 <option value="annule">Annule</option>
               </select>
             </div>
+          </div>
+
+          {/* Piece jointe */}
+          <div style={fieldStyle}>
+            <label style={labelStyle}>Piece jointe (optionnel)</label>
+            {pieceJointe ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <a
+                  href={`${import.meta.env.VITE_DIRECTUS_URL}/assets/${pieceJointe}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--app-primary)", fontSize: 13, fontWeight: 500, textDecoration: "none" }}
+                >
+                  <Paperclip size={14} />
+                  Voir le fichier
+                </a>
+                <button
+                  type="button"
+                  onClick={handleRemoveFile}
+                  style={{ background: "none", border: "none", cursor: "pointer", padding: 2, color: "var(--app-error)", display: "flex", alignItems: "center" }}
+                  title="Supprimer la piece jointe"
+                >
+                  <XCircle size={16} />
+                </button>
+              </div>
+            ) : (
+              <input
+                type="file"
+                onChange={handleFileUpload}
+                disabled={uploadingFile}
+                style={{ ...inputStyle, padding: "8px 12px", fontSize: 13 }}
+              />
+            )}
+            {uploadingFile && (
+              <span style={{ fontSize: 12, color: "var(--app-text-secondary)" }}>Upload en cours...</span>
+            )}
           </div>
 
           {/* Submit */}
