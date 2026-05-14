@@ -18,7 +18,7 @@ function mapEntry(item: any): BudgetProEntry {
     note: item.note,
     statut: item.statut,
     argent_avance: item.argent_avance ?? 0,
-    piece_jointe: item.piece_jointe ?? null,
+    piece_jointe: typeof item.piece_jointe === "object" ? item.piece_jointe?.id ?? null : item.piece_jointe ?? null,
     date_created: item.date_created,
     date_updated: item.date_updated,
   };
@@ -36,7 +36,7 @@ export const directusBudgetProAdapter: BudgetProPort = {
       readItems("budget_pro", {
         filter: Object.keys(filter).length > 0 ? filter : undefined,
         sort: ["annee", "mois", "type"],
-        fields: ["*", "organisme_id.id", "organisme_id.nom", "organisme_id.type"],
+        fields: ["*", "organisme_id.id", "organisme_id.nom", "organisme_id.type", "piece_jointe"],
         limit: -1,
       })
     );
