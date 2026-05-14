@@ -1,9 +1,12 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { useBudgetPro } from "@hooks/useBudgetPro";
 import { BudgetProType, BudgetProFilters } from "@/core/types/budget-pro";
 import { backend } from "@/core/backend";
 import BudgetProBilan from "@components/budget/BudgetProBilan";
-import { ChevronLeft, ChevronRight, Check, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, X, FileDown, Loader2 } from "lucide-react";
+import { generateBilanPdf } from "@lib/generateBilanPdf";
+import { getDirectusAssetUrl, loadImageAsDataUrl, pdfToImages } from "@lib/loadDirectusImage";
+import logoUrl from "@assets/argoweb.png";
 
 const TYPE_LABELS: Record<BudgetProType, string> = {
   recette: "Recette",
@@ -114,6 +117,65 @@ export default function BudgetProAnnuel() {
     backend.comptaParams.get("tva_cumul").then((p) => setTvaCumul(p?.value ?? 0));
   }, []);
 
+  const [pdfLoading, setPdfLoading] = useState(false);
+
+  const handleExportPdf = useCallback(async () => {
+    setPdfLoading(true);
+    try {
+      // Load logo
+      const logoDataUrl = await loadImageAsDataUrl(logoUrl);
+
+      // Fetch ALL entries (unfiltered by type) for the fiscal year
+      const [allNovDec, allJanOct] = await Promise.all([
+        backend.budgetPro.getAll({ annee }),
+        backend.budgetPro.getAll({ annee: annee + 1 }),
+      ]);
+      const allEntries = [
+        ...allNovDec.filter((e) => e.mois >= 11),
+        ...allJanOct.filter((e) => e.mois <= 10),
+      ];
+
+      // Load attachment images (recettes + depenses only)
+      const entriesWithPJ = allEntries.filter(
+        (e) => e.piece_jointe && (e.type === "recette" || e.type === "depense")
+      );
+
+      const attachments: { dataUrl: string; organisme: string; note: string; date: string }[] = [];
+
+      // Load attachments (images + PDF pages)
+      for (const e of entriesWithPJ) {
+        try {
+          const url = getDirectusAssetUrl(e.piece_jointe!);
+          const dataUrl = await loadImageAsDataUrl(url);
+          const year = e.mois >= 11 ? annee : annee + 1;
+          const meta = {
+            organisme: e.organisme.charAt(0).toUpperCase() + e.organisme.slice(1),
+            note: e.note || "",
+            date: `${e.jour || ""}/${e.mois}/${year}`,
+          };
+
+          if (dataUrl.startsWith("data:image/")) {
+            attachments.push({ dataUrl, ...meta });
+          } else if (dataUrl.startsWith("data:application/pdf")) {
+            const pages = await pdfToImages(dataUrl);
+            for (const pageDataUrl of pages) {
+              attachments.push({ dataUrl: pageDataUrl, ...meta });
+            }
+          }
+        } catch (err) {
+          console.error("PJ load failed:", e.piece_jointe, err);
+        }
+      }
+
+      await generateBilanPdf({ annee, entries: allEntries, tvaCumul, logoDataUrl, attachments });
+    } catch (err) {
+      console.error("Erreur generation PDF:", err);
+      alert("Erreur lors de la generation du PDF");
+    } finally {
+      setPdfLoading(false);
+    }
+  }, [annee, tvaCumul]);
+
   const recettes = aggregated.filter((r) => r.type === "recette");
   const depenses = aggregated.filter((r) => r.type === "depense");
   const dividendes = aggregated.filter((r) => r.type === "dividendes");
@@ -139,10 +201,20 @@ export default function BudgetProAnnuel() {
         </span>
         <button onClick={() => setAnnee(annee + 1)} style={navBtnStyle}><ChevronRight size={18} /></button>
 
+        <button
+          onClick={handleExportPdf}
+          disabled={pdfLoading || loading}
+          style={{ ...pdfBtnStyle, marginLeft: "auto", opacity: pdfLoading || loading ? 0.5 : 1 }}
+          title="Generer le PDF"
+        >
+          {pdfLoading ? <Loader2 size={16} className="animate-spin" /> : <FileDown size={16} />}
+          {pdfLoading ? "Generation..." : "PDF"}
+        </button>
+
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value as BudgetProType | "")}
-          style={{ ...filterSelectStyle, marginLeft: "auto" }}
+          style={filterSelectStyle}
         >
           <option value="">Tous les types</option>
           <option value="recette">Recettes</option>
@@ -313,6 +385,21 @@ const navBtnStyle: React.CSSProperties = {
   background: "white",
   cursor: "pointer",
   color: "var(--app-text)",
+};
+
+const pdfBtnStyle: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 6,
+  padding: "8px 16px",
+  borderRadius: 8,
+  border: "1px solid var(--app-border)",
+  background: "white",
+  cursor: "pointer",
+  color: "var(--app-text)",
+  fontSize: 13,
+  fontWeight: 600,
+  fontFamily: "inherit",
 };
 
 const filterSelectStyle: React.CSSProperties = {
