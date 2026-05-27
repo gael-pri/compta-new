@@ -10,41 +10,33 @@ ARG VITE_SUPABASE_ANON_KEY
 ARG VITE_DIRECTUS_URL
 ARG VITE_XANO_API_URL
 
-ENV VITE_GRAPHQL_ENDPOINT=${VITE_GRAPHQL_ENDPOINT}
-ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
-ENV VITE_BACKEND_PROVIDER=${VITE_BACKEND_PROVIDER}
-ENV VITE_IMAGE_URL=${VITE_IMAGE_URL}
-ENV VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
-ENV VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
-ENV VITE_DIRECTUS_URL=${VITE_DIRECTUS_URL}
-ENV VITE_XANO_API_URL=${VITE_XANO_API_URL}
+ENV VITE_GRAPHQL_ENDPOINT=${VITE_GRAPHQL_ENDPOINT} \
+    VITE_BACKEND_URL=${VITE_BACKEND_URL} \
+    VITE_BACKEND_PROVIDER=${VITE_BACKEND_PROVIDER} \
+    VITE_IMAGE_URL=${VITE_IMAGE_URL} \
+    VITE_SUPABASE_URL=${VITE_SUPABASE_URL} \
+    VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY} \
+    VITE_DIRECTUS_URL=${VITE_DIRECTUS_URL} \
+    VITE_XANO_API_URL=${VITE_XANO_API_URL}
 
 COPY package*.json ./
 RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM node:22-alpine
-WORKDIR /usr/src/app
+FROM nginx:alpine
+COPY --from=builder /usr/src/app/dist /usr/share/nginx/html
 
-# Crée un utilisateur non-root
-RUN addgroup --system --gid 1001 appgroup && \
-    adduser --system --uid 1001 appuser
+RUN printf 'server {\n\
+    listen 80;\n\
+    root /usr/share/nginx/html;\n\
+    index index.html;\n\
+    location / {\n\
+        try_files $uri $uri/ /index.html;\n\
+    }\n\
+}\n' > /etc/nginx/conf.d/default.conf
 
-COPY package*.json ./
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-
-# Copie le build et la config Vite (nécessaire pour vite preview)
-COPY --from=builder /usr/src/app/dist ./dist
-COPY --from=builder /usr/src/app/vite.config.ts ./
-
-RUN chown -R appuser:appgroup /usr/src/app
-
-USER appuser
-
-EXPOSE 4173
+EXPOSE 80
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:4173/ || exit 1
-
-CMD ["npm", "run", "preview"]
+  CMD curl -fs http://localhost/ > /dev/null || exit 1

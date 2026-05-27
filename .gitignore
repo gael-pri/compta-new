@@ -43,6 +43,3 @@ vps/**/.env
 
 # Migrations
 migration/
-
-.github/workflows/production-old.yml
-.github/workflows/staging-old.yml
